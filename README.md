@@ -19,8 +19,8 @@ You need to have the `vcpkg` C++ manager to be able to successfully install `ass
 [More on vcpkg](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started-msbuild?pivots=shell-powershell).
 
 ## Credits
-[Model](https://www.turbosquid.com/3d-models/acoustic-guitar-1681137) (although the model is heavily modified to the project model loader's needs)
-[Background image source](https://worldguitars.co.uk/pages/about-us)
+- [Model](https://www.turbosquid.com/3d-models/acoustic-guitar-1681137) (although the model is heavily modified to the project model loader's needs)
+- [Background image source](https://worldguitars.co.uk/pages/about-us)
 
 ## License
 MIT.
