@@ -37,3 +37,12 @@ GLMesh uploadMesh(const MeshData& md);
 glm::mat4 aiMatrix4x4ToGlm(const aiMatrix4x4& mat);
 MeshData processMesh(aiMesh* mesh, const aiScene* scene, const glm::mat4& transform);
 void processNode(aiNode* node, const aiScene* scene, std::vector<MeshData>& outMeshes, const glm::mat4& parentTransform);
+void drawGuitarModel(unsigned int guitarModelShader,
+    const std::vector<GLMesh>& guitarMeshes,
+    glm::mat4 gProjection,
+    glm::mat4 gView,
+    glm::mat4 model,
+    glm::vec3 gLightDir,
+    glm::vec3 gLightColor,
+    glm::vec3 cameraPos,
+    glm::vec3 guitarCenter);

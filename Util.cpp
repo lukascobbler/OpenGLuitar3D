@@ -6,6 +6,8 @@
 #include <iostream>
 #include <vector>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "stb_image.h"
 #include "GuitarString.h"
@@ -321,4 +323,129 @@ glm::vec2 projectToScreen(glm::vec3 p,
     screen.x = (ndc.x * 0.5f + 0.5f) * width;
     screen.y = (1.0f - (ndc.y * 0.5f + 0.5f)) * height;
     return screen;
+}
+
+void drawCircle(unsigned int circleShader,
+    const glm::vec3& center,
+    const glm::mat4& gProjection,
+    const glm::mat4& gView,
+    const glm::mat4& model,
+    float radius,
+    int segments)
+{
+    std::vector<float> vertices;
+    vertices.reserve((segments + 2) * 3);
+
+    vertices.push_back(center.x);
+    vertices.push_back(center.y);
+    vertices.push_back(center.z);
+
+    for (int i = 0; i <= segments; ++i)
+    {
+        float angle = i * 2.0f * glm::pi<float>() / segments;
+        float x = center.x + radius * cos(angle);
+        float y = center.y + radius * sin(angle);
+        float z = center.z;
+
+        vertices.push_back(x);
+        vertices.push_back(y);
+        vertices.push_back(z);
+    }
+
+    GLuint vao, vbo;
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo);
+
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER,
+        vertices.size() * sizeof(float),
+        vertices.data(),
+        GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+        3 * sizeof(float), (void*)0);
+
+    glUseProgram(circleShader);
+
+    glUniformMatrix4fv(glGetUniformLocation(circleShader, "model"),
+        1, GL_FALSE, &model[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(circleShader, "view"),
+        1, GL_FALSE, &gView[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(circleShader, "projection"),
+        1, GL_FALSE, &gProjection[0][0]);
+
+    glBindVertexArray(vao);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, (GLsizei)(vertices.size() / 3));
+    glBindVertexArray(0);
+
+    glDeleteBuffers(1, &vbo);
+    glDeleteVertexArrays(1, &vao);
+}
+
+unsigned int createTexturedVAO(const float* vertices, size_t vertexCount) {
+    unsigned int indices[] = { 0, 1, 2, 2, 3, 0 };
+    size_t indexCount = 6;
+
+    unsigned int VAO, VBO, EBO;
+
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(float), vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+
+    // layout: vec2 position, vec2 texcoord
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glBindVertexArray(0);
+
+    return VAO;
+}
+
+void drawTexture(unsigned int shader, unsigned int vao, unsigned int texture)
+{
+    glDepthMask(GL_FALSE);
+
+    glUseProgram(shader);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    setInt(shader, "bgTexture", 0);
+
+    glBindVertexArray(vao);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    glDepthMask(GL_TRUE);
+}
+
+void setMat4(GLuint prog, const char* name, const glm::mat4& m) {
+    glUniformMatrix4fv(glGetUniformLocation(prog, name),
+        1, GL_FALSE, glm::value_ptr(m));
+}
+void setMat3(GLuint prog, const char* name, const glm::mat4& m) {
+    glUniformMatrix3fv(glGetUniformLocation(prog, name),
+        1, GL_FALSE, glm::value_ptr(m));
+}
+void setVec3(GLuint prog, const char* name, const glm::vec3& v) {
+    glUniform3fv(glGetUniformLocation(prog, name), 1, glm::value_ptr(v));
+}
+void setVec4(GLuint prog, const char* name, const glm::vec4& v) {
+    glUniform4fv(glGetUniformLocation(prog, name), 1, glm::value_ptr(v));
+}
+void setInt(GLuint prog, const char* name, int v) {
+    glUniform1i(glGetUniformLocation(prog, name), v);
+}
+void setFloat(GLuint prog, const char* name, float v) {
+    glUniform1f(glGetUniformLocation(prog, name), v);
 }

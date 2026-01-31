@@ -16,9 +16,6 @@
     <ClCompile Include="ModelUtil.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Ball.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Util.h">
@@ -34,9 +31,6 @@
       <Filter>Headers\predefined</Filter>
     </ClInclude>
     <ClInclude Include="ModelUtil.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Ball.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -60,12 +54,6 @@
     <None Include="string.vert">
       <Filter>Shaders\strings</Filter>
     </None>
-    <None Include="ball.vert">
-      <Filter>Shaders\ball</Filter>
-    </None>
-    <None Include="ball.frag">
-      <Filter>Shaders\ball</Filter>
-    </None>
     <None Include="circle.frag">
       <Filter>Shaders\circle</Filter>
     </None>
@@ -74,9 +62,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Resources">
-      <UniqueIdentifier>{d5fc283e-66b2-4c73-bcf1-cfccc786d88b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source">
       <UniqueIdentifier>{f5d84512-d76c-4284-bbde-0f58bae017bb}</UniqueIdentifier>
     </Filter>
@@ -98,25 +83,8 @@
     <Filter Include="Shaders\strings">
       <UniqueIdentifier>{0346048b-f19a-4aba-8d63-f461a0858dc0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders\ball">
-      <UniqueIdentifier>{c4791153-ea26-41c8-b816-3e62ba02771b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders\circle">
       <UniqueIdentifier>{c8ccc757-f921-40d8-aaf2-a875f01614ca}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="res\textures\cursor.png">
-      <Filter>Resources</Filter>
-    </Image>
-    <Image Include="res\textures\cursor_pressed.png">
-      <Filter>Resources</Filter>
-    </Image>
-    <Image Include="res\textures\guitar_no_strings.png">
-      <Filter>Resources</Filter>
-    </Image>
-    <Image Include="res\textures\signature.png">
-      <Filter>Resources</Filter>
-    </Image>
   </ItemGroup>
 </Project>

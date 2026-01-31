@@ -1,7 +1,5 @@
 #include "Audio.h"
 #include <fstream>
-// #define NOMINMAX
-//#include <windows.h>
 
 #pragma comment(lib, "xaudio2.lib")
 

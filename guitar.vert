@@ -14,10 +14,8 @@ out vec2 TexCoord;
 
 void main()
 {
-    // world-space position
     FragPos = vec3(Model * vec4(aPos, 1.0));
 
-    // correct normal transform
     Normal = normalize(NormalMatrix * aNormal);
 
     TexCoord = aUV;

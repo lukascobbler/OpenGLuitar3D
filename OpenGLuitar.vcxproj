@@ -132,8 +132,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="ball.frag" />
-    <None Include="ball.vert" />
     <None Include="circle.frag" />
     <None Include="circle.vert" />
     <None Include="guitar.frag" />
@@ -146,7 +144,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Audio.cpp" />
-    <ClCompile Include="Ball.cpp" />
     <ClCompile Include="GuitarString.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="ModelUtil.cpp" />
@@ -154,17 +151,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Audio.h" />
-    <ClInclude Include="Ball.h" />
     <ClInclude Include="GuitarString.h" />
     <ClInclude Include="ModelUtil.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Util.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="res\textures\cursor.png" />
-    <Image Include="res\textures\cursor_pressed.png" />
-    <Image Include="res\textures\guitar_no_strings.png" />
-    <Image Include="res\textures\signature.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

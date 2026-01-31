@@ -17,6 +17,7 @@
 #include "stb_image.h"
 
 #include "ModelUtil.h"
+#include "Util.h"
 
 glm::mat4 aiMatrix4x4ToGlm(const aiMatrix4x4& mat)
 {
@@ -37,7 +38,7 @@ GLuint loadEmbeddedTexture(const aiScene* scene, const aiMaterial* mat)
 
     std::string path = texPath.C_Str();
     if (path.empty()) return 0;
-    if (path[0] != '*') return 0; // not embedded
+    if (path[0] != '*') return 0;
 
     int texIndex = std::stoi(path.substr(1));
     aiTexture* tex = scene->mTextures[texIndex];
@@ -46,7 +47,6 @@ GLuint loadEmbeddedTexture(const aiScene* scene, const aiMaterial* mat)
     unsigned char* data = nullptr;
 
     if (tex->mHeight == 0) {
-        // compressed (PNG/JPG)
         data = stbi_load_from_memory(
             reinterpret_cast<unsigned char*>(tex->pcData),
             tex->mWidth,
@@ -54,7 +54,6 @@ GLuint loadEmbeddedTexture(const aiScene* scene, const aiMaterial* mat)
         );
     }
     else {
-        // uncompressed RGBA
         width = tex->mWidth;
         height = tex->mHeight;
         channels = 4;
@@ -208,4 +207,44 @@ GLMesh uploadMesh(const MeshData& md)
 
     glBindVertexArray(0);
     return m;
+}
+
+void drawGuitarModel(unsigned int guitarModelShader,
+    const std::vector<GLMesh>& guitarMeshes,
+    glm::mat4 gProjection,
+    glm::mat4 gView,
+    glm::mat4 model,
+    glm::vec3 gLightDir,
+    glm::vec3 gLightColor,
+    glm::vec3 cameraPos,
+    glm::vec3 guitarCenter)
+{
+    glUseProgram(guitarModelShader);
+
+    glm::mat4 MVP = gProjection * gView * model;
+    glm::mat3 normalMat = glm::transpose(glm::inverse(glm::mat3(model)));
+
+    setMat4(guitarModelShader, "MVP", MVP);
+    setMat4(guitarModelShader, "Model", model);
+    setMat3(guitarModelShader, "NormalMatrix", normalMat);
+
+    setVec3(guitarModelShader, "lightDir", gLightDir);
+    setVec3(guitarModelShader, "lightColor", gLightColor);
+    setVec3(guitarModelShader, "cameraPos", cameraPos);
+
+    for (const auto& guitar : guitarMeshes)
+    {
+        glUniform4fv(glGetUniformLocation(guitarModelShader, "baseColorFactor"),
+            1, glm::value_ptr(guitar.baseColorFactor));
+
+        glActiveTexture(GL_TEXTURE0);
+        if (guitar.texture != 0)
+            glBindTexture(GL_TEXTURE_2D, guitar.texture);
+        else
+            glBindTexture(GL_TEXTURE_2D, 0);
+        setInt(guitarModelShader, "tex", 0);
+
+        glBindVertexArray(guitar.vao);
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(guitar.indexCount), GL_UNSIGNED_INT, 0);
+    }
 }

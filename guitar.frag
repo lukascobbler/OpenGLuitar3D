@@ -12,22 +12,18 @@ uniform vec4 baseColorFactor;
 
 void main()
 {
-    // World-space normal
     vec3 N = normalize(Normal);
 
-    // Albedo from texture
     vec3 texColor = texture(tex, TexCoord).rgb;
     vec3 albedo = (texColor.r == 0.0 && texColor.g == 0.0 && texColor.b == 0.0) 
              ? baseColorFactor.rgb 
              : texColor * baseColorFactor.rgb;
 
-    // Studio ambient: completely even lighting
-    vec3 ambient = 0.8 * albedo; // stronger to ensure even lighting
+    vec3 ambient = 0.8 * albedo;
 
-    // Optional subtle rim light for shape
     vec3 V = normalize(cameraPos - FragPos);
     float rim = pow(1.0 - max(dot(N, V), 0.0), 2.0);
-    vec3 rimLight = 0.1 * rim * albedo; // scaled by albedo for color consistency
+    vec3 rimLight = 0.1 * rim * albedo;
 
     vec3 finalColor = clamp(ambient + rimLight, 0.0, 1.0);
 
