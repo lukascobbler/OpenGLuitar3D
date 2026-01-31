@@ -76,6 +76,26 @@ double lastTimeForRefresh;
 // loading
 std::atomic<bool> modelReadyCPU = false;
 
+// tests
+bool isEnabledDepthTest = true;
+bool isEnabledFaceCulling = true;
+
+void toggleDepthTest()
+{
+    isEnabledDepthTest = !isEnabledDepthTest;
+    if (isEnabledDepthTest) glEnable(GL_DEPTH_TEST);
+    else glDisable(GL_DEPTH_TEST);
+    std::cout << (isEnabledDepthTest ? "DEPTH TEST ENABLED" : "DEPTH TEST DISABLED") << std::endl;
+}
+
+void toggleFaceCulling()
+{
+    isEnabledFaceCulling = !isEnabledFaceCulling;
+    if (isEnabledFaceCulling) glEnable(GL_CULL_FACE);
+    else glDisable(GL_CULL_FACE);
+    std::cout << (isEnabledFaceCulling ? "FACECULLING ENABLED" : "FACECULLING DISABLED") << std::endl;
+}
+
 int endProgram(std::string message) {
     std::cout << message << std::endl;
     glfwTerminate();
@@ -195,6 +215,14 @@ void onetimeBtnPressCallback(GLFWwindow* window, int key, int scancode, int acti
 
     if (key == GLFW_KEY_P && action == GLFW_PRESS) {
         togglePlayMode();
+    }
+
+    if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+        toggleDepthTest();
+    }
+
+    if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+        toggleFaceCulling();
     }
 
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
@@ -759,7 +787,7 @@ int main()
 
     // fullscreen window creation
     GLFWwindow* window = createFullScreenWindow("OpenGLuitar");
-    // GLFWwindow* window = glfwCreateWindow(1280, 720, "test", NULL, NULL);
+    // GLFWwindow* window = glfwCreateWindow(1600, 900, "test", NULL, NULL);
     if (window == NULL) return endProgram("Window did not create successfully.");
     glfwMakeContextCurrent(window);
 
@@ -885,7 +913,6 @@ int main()
     }
 
     glEnable(GL_DEPTH_TEST);
-
     glEnable(GL_FRAMEBUFFER_SRGB);
 
     glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
@@ -937,7 +964,5 @@ int main()
 }
 
 // sviranje desni klik
-// ambijentalna muzika, 
-// testovi za dubinu, 
 // de-aifikovanje koda, 
 // readme + kako instalirati,
