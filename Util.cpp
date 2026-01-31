@@ -230,7 +230,6 @@ void startCameraAnimation(CameraAnimation& anim,
 
 float pointLineDistance(float px, float py, float x0, float y0, float x1, float y1)
 {
-    // calculating the distance from a line using the normalized projection factor formula
     float dx = x1 - x0; float dy = y1 - y0;
     float lenSq = dx * dx + dy * dy;
     float t = ((px - x0) * dx + (py - y0) * dy) / lenSq;
@@ -242,45 +241,71 @@ float pointLineDistance(float px, float py, float x0, float y0, float x1, float 
     return std::sqrt(dx * dx + dy * dy);
 }
 
-void findClosestStringAndFret(float mouseXNDC, float mouseYNDC, const std::vector<GuitarString>& strings,
-    int& outStringIndex, int& outFretIndex, float& outDistUp)
+void findClosestStringAndFret(
+    float mouseX, float mouseY,
+    const std::vector<GuitarString>& strings,
+    const glm::mat4& model,
+    const glm::mat4& view,
+    const glm::mat4& proj,
+    int width, int height,
+    int& outStringIndex,
+    int& outFretIndex,
+    float& outDistUp)
 {
     outStringIndex = -1;
     outFretIndex = -1;
-    outDistUp = -1;
+    outDistUp = 999999.0f;
 
-    float minDist = 99999.0f;
-    for (size_t i = 0; i < strings.size(); i++)
+    float minDist = 999999.0f;
+
+    for (int i = 0; i < strings.size(); i++)
     {
         const auto& s = strings[i];
-        float dist = pointLineDistance(mouseXNDC, mouseYNDC, s.x0, s.y0, s.x1, s.y1);
+
+        glm::vec3 p0(s.x0, s.y0, s.z0);
+        glm::vec3 p1(s.x1, s.y1, s.z1);
+
+        glm::vec2 s0 = projectToScreen(p0, model, view, proj, width, height);
+        glm::vec2 s1 = projectToScreen(p1, model, view, proj, width, height);
+
+        float dist = pointLineDistance(mouseX, mouseY,
+            s0.x, s0.y, s1.x, s1.y);
+
         if (dist < minDist)
         {
             minDist = dist;
-            outStringIndex = (int)i;
+            outStringIndex = i;
         }
     }
+
+    if (outStringIndex < 0) return;
 
     outDistUp = minDist;
 
-    const auto& closestString = strings[outStringIndex];
+    const auto& s = strings[outStringIndex];
 
-    float minFretDist = 99999.0f;
-    int closestFret = -1;
+    float minFretDist = 999999.0f;
 
-    for (size_t f = 0; f < closestString.fretMiddles.size(); f++)
+    for (int f = 0; f < s.fretMiddles.size(); f++)
     {
-        float dx = mouseXNDC - closestString.fretMiddles[f][1];
-        float dy = mouseYNDC - closestString.fretMiddles[f][2];
-        float d = std::sqrt(dx * dx + dy * dy);
+        glm::vec3 p(
+            s.fretMiddles[f][1],
+            s.fretMiddles[f][2],
+            s.fretMiddles[f][3]
+        );
+
+        glm::vec2 sp = projectToScreen(p, model, view, proj, width, height);
+
+        float dx = mouseX - sp.x;
+        float dy = mouseY - sp.y;
+        float d = sqrt(dx * dx + dy * dy);
+
         if (d < minFretDist)
         {
             minFretDist = d;
-            closestFret = (int)f;
+            outFretIndex = f;
         }
     }
-
-    outFretIndex = closestFret;
 }
 
 glm::vec2 projectToScreen(glm::vec3 p,

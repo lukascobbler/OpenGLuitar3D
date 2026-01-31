@@ -31,8 +31,16 @@ void startCameraAnimation(CameraAnimation& anim, float newPitch, float newYaw, f
     float duration, float startPitch, float startYaw, float startZoom);
 
 float pointLineDistance(float px, float py, float x0, float y0, float x1, float y1);
-void findClosestStringAndFret(float mouseXNDC, float mouseYNDC, const std::vector<GuitarString>& strings,
-    int& outStringIndex, int& outFretIndex, float& outDistUp);
+void findClosestStringAndFret(
+    float mouseX, float mouseY,
+    const std::vector<GuitarString>& strings,
+    const glm::mat4& model,
+    const glm::mat4& view,
+    const glm::mat4& proj,
+    int width, int height,
+    int& outStringIndex,
+    int& outFretIndex,
+    float& outDistUp);
 glm::vec2 projectToScreen(glm::vec3 p,
     glm::mat4 model,
     glm::mat4 view,

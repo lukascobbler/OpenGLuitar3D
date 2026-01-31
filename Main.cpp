@@ -533,20 +533,24 @@ void drawStrings3D(unsigned int stringShader,
 
         // Right-click
         if (isPressedRight) {
-            //int closestString, closestFret;
-            //float distUp;
-            //findClosestStringAndFret(screenMouseX, screenMouseY, strings, closestString, closestFret, distUp);
+            int closestString, closestFret;
+            float distUp;
+            findClosestStringAndFret(
+                screenMouseX, screenMouseY,
+                strings,
+                model, gView, gProjection,
+                width, height, closestString, closestFret, distUp);
 
-            //if (distUp < pixelThickness * 2.5f &&
-            //    strings[closestString].name == string.name &&
-            //    (closestFret != lastHitFret || string.name != lastHitStringName))
-            //{
-            //    string.fretPressed = closestFret;
-            //    lastHitFret = closestFret;
-            //    lastHitStringName = string.name;
-            //    trigger = true;
-            //    string.hasBeenTriggered = true;
-            //}
+            if (distUp < pixelThickness * 2.5f &&
+                strings[closestString].name == string.name &&
+                (closestFret != lastHitFret || string.name != lastHitStringName))
+            {
+                string.fretPressed = closestFret;
+                lastHitFret = closestFret;
+                lastHitStringName = string.name;
+                trigger = true;
+                string.hasBeenTriggered = true;
+            }
         }
 
         if (trigger) {
@@ -555,7 +559,6 @@ void drawStrings3D(unsigned int stringShader,
             string.vibrationTime = 0.0f;
         }
 
-        // Update vibration amplitude
         if (string.isVibrating) {
             string.vibrationTime += 0.016f;
             string.currentAmplitude = MAXIMUM_AMPLITUDE / (1.0f + DECAY_RATE * string.vibrationTime);
@@ -568,7 +571,6 @@ void drawStrings3D(unsigned int stringShader,
             string.currentAmplitude = 0.0f;
         }
 
-        // Determine fret cut
         float fretCut = string.y1;
         if (string.fretPressed >= 0 && string.fretPressed < string.fretMiddles.size()) {
             fretCut = string.fretMiddles[string.fretPressed][2];
@@ -963,6 +965,5 @@ int main()
     return 0;
 }
 
-// sviranje desni klik
 // de-aifikovanje koda, 
 // readme + kako instalirati,
